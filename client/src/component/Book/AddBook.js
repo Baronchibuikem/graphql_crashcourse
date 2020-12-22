@@ -1,34 +1,17 @@
 import React from "react";
-import { useQuery, gql } from "@apollo/client";
 import { useForm } from "react-hook-form";
+import { useQuery, useMutation } from "@apollo/client";
+import {displayAuthor, addBookMutation} from "../../queries/Queries"
 
-const displayAuthor = gql`
-  query {
-    authors {
-      name
-      id
-    }
-  }
-`;
+
+
 
 function AddBook() {
   const { loading, error, data } = useQuery(displayAuthor);
+  const [addBook, { loading: loading2, error: error2 }] = useMutation(addBookMutation)
+
   const { register, handleSubmit, errors } = useForm();
 
-  if (error)
-    return (
-      <div className="alert alert-success" role="alert">
-        Error :(
-      </div>
-    );
-
-  // const auth = () => { return data.authors.map((book) => (
-  //   <div key={book.id}>
-  //     <p>
-  //       {book.name}
-  //     </p>
-  //   </div>
-  // ))}
 
   const getAuthors = () => {
     if (loading) {
@@ -36,7 +19,7 @@ function AddBook() {
     } else {
       return data.authors.map(author => {
         return (
-          <option key={author.id} value={author.id}>
+          <option key={author._id} value={author._id}>
             {author.name}
           </option>
         );
@@ -44,10 +27,19 @@ function AddBook() {
     }
   };
 
+
+
+
+  const add_Book = (data) => {
+    const {name, genre, authorId} = data
+    console.log(data)
+    addBook({ variables: { name, genre, authorId} });
+  }
+
   return (
     <div>
-      {/* <form onSubmit={handleSubmit(loginSubmit)}> */}
-      <form className="col-md-8 mt-5 mx-auto">
+      <form onSubmit={handleSubmit(add_Book)} className="col-md-8 mt-5 mx-auto">
+      {/* <form > */}
         <div
           className="text-uppercase text-center font-weight-bold"
           style={{ fontSize: "20px" }}
@@ -81,11 +73,11 @@ function AddBook() {
         </h6>
 
         <select
-          name="author"
+          name="authorId"
           ref={register({ required: true })}
           className="form-control"
         >
-          {/* <option>Select author</option> */}
+          <option className="form-control">Select author</option>
           {getAuthors()}
         </select>
         <h6 className="text-left font-italic text-danger">
@@ -94,11 +86,10 @@ function AddBook() {
           )}
         </h6>
         <button
-          className="mx-auto px-5 py-3 my-2 col-sm-12 text-light"
+          className="mx-auto form-control my-2 col-sm-12 text-light bg-primary"
           type="submit"
-          style={{ backgroundColor: "gray" }}
         >
-          AddBook
+          Add book
         </button>
       </form>
     </div>

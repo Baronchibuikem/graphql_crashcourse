@@ -1,19 +1,6 @@
 import React, { useState } from "react";
-import { useQuery, gql } from "@apollo/client";
-import "../../index.css";
-
-const getBooksQuery = gql`
-  query {
-    books {
-      name
-      id
-      genre
-      author {
-        name
-      }
-    }
-  }
-`;
+import { useQuery } from "@apollo/client";
+import { getBooksQuery } from "../../queries/Queries";
 
 function Booklist() {
   const { loading, error, data } = useQuery(getBooksQuery);
@@ -33,13 +20,13 @@ function Booklist() {
 
   if (error)
     return (
-      <div class="alert alert-success" role="alert">
+      <div className="alert alert-success" role="alert">
         Error :(
       </div>
     );
 
   return data.books.map((book) => (
-    <div key={book.id}>
+    <div key={book._id}>
       <p>
         {book.author.name} is the writer of {book.name} that belongs to{" "}
         {book.genre} genre
