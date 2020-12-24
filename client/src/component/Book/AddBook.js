@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useMutation } from "@apollo/client";
-import {displayAuthor, addBookMutation} from "../../queries/Queries"
+import {displayAuthor, addBookMutation, getBooksQuery } from "../../queries/Queries"
 
 
 
@@ -19,7 +19,7 @@ function AddBook() {
     } else {
       return data.authors.map(author => {
         return (
-          <option key={author._id} value={author._id}>
+          <option key={author.id} value={author.id}>
             {author.name}
           </option>
         );
@@ -33,7 +33,7 @@ function AddBook() {
   const add_Book = (data) => {
     const {name, genre, authorId} = data
     console.log(data)
-    addBook({ variables: { name, genre, authorId} });
+    addBook({ variables: { name, genre, authorId}, refetchQueries:[{query:getBooksQuery }]})      
   }
 
   return (
@@ -81,7 +81,7 @@ function AddBook() {
           {getAuthors()}
         </select>
         <h6 className="text-left font-italic text-danger">
-          {errors.author && errors.author.type === "required" && (
+          {errors.authorid && errors.authorId.type === "required" && (
             <p>Author field is required</p>
           )}
         </h6>

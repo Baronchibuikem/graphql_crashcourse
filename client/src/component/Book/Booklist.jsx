@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { getBooksQuery } from "../../queries/Queries";
+import Book from "./Book";
 
 function Booklist() {
   const { loading, error, data } = useQuery(getBooksQuery);
+  const [selected, setSelected] = useState(null);
 
   if (loading)
     return (
@@ -25,14 +27,29 @@ function Booklist() {
       </div>
     );
 
-  return data.books.map((book) => (
-    <div key={book._id}>
-      <p>
-        {book.author.name} is the writer of {book.name} that belongs to{" "}
-        {book.genre} genre
-      </p>
+  const getBooks = () => {
+    return data.books.map((book) => {
+      return (
+        <div className="col-md-4" key={book.id}>
+          <button
+            className="shadow card p-3"
+            onClick={(e) => setSelected(book.id)}
+          >
+            {book.name}
+          </button>
+        </div>
+      );
+    });
+  };
+
+  return (
+    <div className="row">
+      <div className="col-md-6">
+        <div className="row">{getBooks()}</div>
+      </div>
+      <div className="col-md-6">{!selected ? "" : <Book id={selected} />}</div>
     </div>
-  ));
+  );
 }
 
 export default Booklist;
